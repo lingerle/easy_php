@@ -9,7 +9,8 @@ def GetFie(module):
     ##定义安装插件的三个命令
     run1 = "/usr/local/php/bin/phpize"
     run2 = "./configure --with-php-config=/usr/local/php/bin/php-config"
-    run3 = "make && make install"
+    run3 = "make"
+    run4 = "make install"
     ##确定php安装路径
     if not os.path.exists(run1):
         phppath = raw_input("请输入您的php安装路径:")
@@ -50,12 +51,16 @@ def GetFie(module):
     
     try:
         print "开始安装:"
-        os.system(run1)
-        os.system(run2)
-        os.system(run3)
+        os.system(run1+">/dev/null 2>&1")
+        os.system(run2+">/dev/null 2>&1")
+        os.system(run3+">/dev/null 2>&1")
+        os.system(run4+">/dev/null 2>&1")
     except:
         s=sys.exc_info()
         print s[1]
+    print "添加配置到php.ini:"
+    os.system('sed -i "/^extension_dir/a extension = \"%s.so\"" /usr/local/php/etc/php.ini' % inmodule) 
+    os.system("/root/fastcgi_reload >/dev/null 2>&1")
     ####删除安装包
     os.system("rm -rf "+destdir+"/*") 
 if __name__ == '__main__':
